@@ -1,8 +1,8 @@
 import streamlit as st
-from huggingface_hub import InferenceClient
+from huggingface_hub import InferenceApi  # Change this line to use InferenceApi
 
 # Initialize the Hugging Face Inference client
-client = InferenceClient(api_key=st.secrets["API_KEY"])
+client = InferenceApi(repo_id="mistralai/Mistral-Nemo-Instruct-2407", token=st.secrets["API_KEY"])
 
 # Initial page config
 st.set_page_config(
@@ -27,11 +27,7 @@ def get_response(messages):
     """
     Generate a response using the Hugging Face Mistral model.
     """
-    completion = client.chat.completions.create(
-        model="mistralai/Mistral-Nemo-Instruct-2407",
-        messages=messages,
-        max_tokens=500
-    )
+    completion = client.chat(messages=messages, max_tokens=500)  # Use the correct method
     return completion["choices"][0]["message"]["content"]
 
 # Display previous chat messages
