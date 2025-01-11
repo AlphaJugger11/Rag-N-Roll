@@ -1,5 +1,9 @@
 import streamlit as st
+import pandas as pd
+import snowflake
+from snowflake.snowpark.context import get_active_session
 from huggingface_hub import InferenceClient
+session = get_active_session()
 
 # Initialize the Hugging Face Inference client
 client = InferenceClient(api_key=st.secrets["API_KEY"])
@@ -82,8 +86,9 @@ def complete(myquestion, model_name, rag = 1):
     df_response = session.sql(cmd, params=['mistral-large', prompt]).collect()
     return df_response, url_link, relative_path
 
-def get_response (question, rag=0):
+def get_response (question):
     model = 'mistral-large'
+    rag = 1
     response, url_link, relative_path = complete(question, model, rag)
     res_text = response[0].RESPONSE
     st.markdown(res_text)
