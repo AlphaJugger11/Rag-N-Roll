@@ -30,7 +30,7 @@ def get_response(messages):
     completion = client.chat.completions.create(
         model="mistralai/Mistral-Nemo-Instruct-2407",
         messages=messages,
-        max_tokens=500
+        max_tokens=4096
     )
     return completion["choices"][0]["message"]["content"]
 
