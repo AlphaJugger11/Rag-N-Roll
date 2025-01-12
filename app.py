@@ -14,7 +14,8 @@ connection_params = {
     "schema": st.secrets["snowflake"]["schema"],
     "warehouse": st.secrets["snowflake"]["warehouse"]
 }
-
+## just to check the changes
+st.write(st.secrets)
 
 # Establishing Snowflake session
 session = snowpark.Session.builder.configs(connection_params).create()
