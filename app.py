@@ -3,7 +3,19 @@ import pandas as pd
 import snowflake
 from snowflake.snowpark.context import get_active_session
 from huggingface_hub import InferenceClient
-session = get_active_session()
+# session = get_active_session()
+connection_params = {
+    "account": st.secrets["snowflake"]["account"],
+    "user": st.secrets["snowflake"]["user"],
+    "password": st.secrets["snowflake"]["password"],
+    "role": st.secrets["snowflake"]["role"],
+    "database": st.secrets["snowflake"]["database"],
+    "schema": st.secrets["snowflake"]["schema"],
+    "warehouse": st.secrets["snowflake"]["warehouse"]
+}
+
+# Establishing Snowflake session
+session = snowpark.Session.builder.configs(connection_params).create()
 
 # Initialize the Hugging Face Inference client
 client = InferenceClient(api_key=st.secrets["API_KEY"])
