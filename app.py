@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import snowflake
 from snowflake.snowpark.context import get_active_session
-from snowflake import snowspark
+from snowflake import snowpark
 from huggingface_hub import InferenceClient
 # session = get_active_session()
 connection_params = {
