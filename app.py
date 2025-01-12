@@ -5,6 +5,14 @@ from snowflake.snowpark.context import get_active_session
 from snowflake import snowpark
 from huggingface_hub import InferenceClient
 # session = get_active_session()
+
+st.set_page_config(
+    page_title="Chat App",
+    page_icon="💬",
+    layout="wide",
+    initial_sidebar_state="collapsed"  # Sidebar starts in collapsed state
+)
+
 connection_params = {
     "account": st.secrets["snowflake"]["account"],
     "user": st.secrets["snowflake"]["user"],
@@ -15,7 +23,7 @@ connection_params = {
     "warehouse": st.secrets["snowflake"]["warehouse"]
 }
 ## just to check the changes
-st.write(st.secrets)
+# st.write(st.secrets)
 
 # Establishing Snowflake session
 session = snowpark.Session.builder.configs(connection_params).create()
@@ -24,12 +32,7 @@ session = snowpark.Session.builder.configs(connection_params).create()
 client = InferenceClient(api_key=st.secrets["API_KEY"])
 
 # Initial page config
-st.set_page_config(
-    page_title="Chat App",
-    page_icon="💬",
-    layout="wide",
-    initial_sidebar_state="collapsed"  # Sidebar starts in collapsed state
-)
+
 
 # Streamlit app layout
 st.sidebar.title("Chat App")
