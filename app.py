@@ -5,13 +5,13 @@ from snowflake.snowpark.context import get_active_session
 from huggingface_hub import InferenceClient
 # session = get_active_session()
 connection_params = {
-    "account": st.secrets["snowflake"]["account"],
-    "user": st.secrets["snowflake"]["user"],
-    "password": st.secrets["snowflake"]["password"],
-    "role": st.secrets["snowflake"]["role"],
-    "database": st.secrets["snowflake"]["database"],
-    "schema": st.secrets["snowflake"]["schema"],
-    "warehouse": st.secrets["snowflake"]["warehouse"]
+    "account": st.secrets["account"],
+    "user": st.secrets["user"],
+    "password": st.secrets["password"],
+    "role": st.secrets["role"],
+    "database": st.secrets["database"],
+    "schema": st.secrets["schema"],
+    "warehouse": st.secrets["warehouse"]
 }
 
 # Establishing Snowflake session
