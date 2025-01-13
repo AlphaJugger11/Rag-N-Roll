@@ -96,36 +96,39 @@ def create_prompt (myquestion, rag):
       
     return prompt, url_link, relative_path
 
-def complete(myquestion, model_name, rag = 1):
-    prompt, url_link, relative_path =create_prompt (myquestion, rag)
-    cmd = f"""
-             select SNOWFLAKE.CORTEX.COMPLETE(?,?) as response
-           """   
-    df_response = session.sql(cmd, params=['mistral-large', prompt]).collect()
-    return df_response, url_link, relative_path
+# def complete(myquestion, model_name, rag = 1):
+#     prompt, url_link, relative_path =create_prompt (myquestion, rag)
+#     cmd = f"""
+#              select SNOWFLAKE.CORTEX.COMPLETE(?,?) as response
+#            """   
+#     df_response = session.sql(cmd, params=['mistral-large', prompt]).collect()
+#     return df_response, url_link, relative_path
 
-def get_response (question):
-    model = 'mistral-large'
-    rag = 1
-    response, url_link, relative_path = complete(question, model, rag)
-    res_text = response[0].RESPONSE
-    st.markdown(res_text)
-    if rag == 1:
-        display_url = f"Link to [{relative_path}]({url_link}) that may be useful"
-        st.markdown(display_url)
-    return res_text
+# def display_response (question):
+#     model = 'mistral-large'
+#     rag = 1
+#     response, url_link, relative_path = complete(question, model, rag)
+#     res_text = response[0].RESPONSE
+#     st.markdown(res_text)
+#     if rag == 1:
+#         display_url = f"Link to [{relative_path}]({url_link}) that may be useful"
+#         st.markdown(display_url)
+#     return res_text
 
 # Function to generate a response using the Hugging Face model
-# def get_response(messages):
-#     """
-#     Generate a response using the Hugging Face Mistral model.
-#     """
-#     completion = client.chat.completions.create(
-#         model="mistralai/Mistral-Nemo-Instruct-2407",
-#         messages=messages,
-#         max_tokens=4096
-#     )
-#     return completion["choices"][0]["message"]["content"]
+def get_response(messages):
+    """
+    Generate a response using the Hugging Face Mistral model.
+    """
+    prompt, url_link, relative_path = create_prompt (messages, rag)
+    display_url = f"Link to [{relative_path}]({url_link}) that may be useful"
+    
+    completion = client.chat.completions.create(
+        model="mistralai/Mistral-Nemo-Instruct-2407",
+        messages=prompt,
+        max_tokens=4096
+    )
+    return completion["choices"][0]["message"]["content"] + display_url
 
 # Display previous chat messages
 for message in st.session_state.messages:
