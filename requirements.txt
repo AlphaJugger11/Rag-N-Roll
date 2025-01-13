@@ -1,0 +1,9 @@
+streamlit
+huggingface_hub
+google-api-python-client
+requests
+gdown
+pandas
+snowflake-connector-python
+pdfplumber
+snowflake-snowpark-python
