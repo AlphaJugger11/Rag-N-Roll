@@ -114,8 +114,7 @@ def get_response(question):
     # Add the user's question to session state messages
     st.session_state.messages.append({"role": "user", "content": question})
 
-    # Ensure roles alternate between 'user' and 'assistant'
-    # We will force the alternation by ensuring the conversation structure is correct
+    # Ensure roles alternate correctly
     try:
         # Call Hugging Face chat completions API
         completion = client.chat.completions.create(
@@ -136,6 +135,7 @@ def get_response(question):
     except Exception as e:
         st.error(f"Error during API call: {e}")
         return "I'm sorry, I couldn't process your request."
+
 
 
 # Display previous chat messages
