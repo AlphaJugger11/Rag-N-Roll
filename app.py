@@ -111,35 +111,32 @@ def get_response(question):
     """
     Generate a response using the Hugging Face API and retain previous context.
     """
-    # Add the user's question to session state messages
-    print(question)
-    print('This runs')
-    st.session_state.messages.append({"role": "user", "content": question})
-    print('This runs aswell 1')
-    # Ensure roles alternate correctly
-    try:
-        # Call Hugging Face chat completions API
-        print(st.session_state.messages)
-        completion = client.chat.completions.create(
-            model="mistralai/Mistral-7B-Instruct-v0.3",  # Your model
-            messages=st.session_state.messages,  # Pass the full conversation context
-            max_tokens=500  # Adjust based on your needs
-        )
-        print('This runs aswell 2')
-        # Extract the assistant's response
-        response_content = completion['choices'][0]['message']['content']
+    # Ensure previous messages are initialized
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
-        # Add the assistant's response to session state messages
+    # Add the user's question to the context
+    st.session_state.messages.append({"role": "user", "content": question})
+
+    # Validate alternation of roles in the message sequence
+    try:
+        completion = client.chat.completions.create(
+            model="mistralai/Mistral-7B-Instruct-v0.1",
+            messages=st.session_state.messages,
+            max_tokens=4096
+        )
+
+        # Extract the assistant's response
+        response_content = completion["choices"][0]["message"]["content"]
+
+        # Add the assistant's response to the context
         st.session_state.messages.append({"role": "assistant", "content": response_content})
 
-        # Return the assistant's response
         return response_content
 
     except Exception as e:
         st.error(f"Error during API call: {e}")
         return "I'm sorry, I couldn't process your request."
-
-
 
 # Display previous chat messages
 for message in st.session_state.messages:
