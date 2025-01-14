@@ -120,8 +120,8 @@ def get_response(question):
 
     # Validate alternation of roles in the message sequence
     try:
-        completion = client.chat_completion(
-            model="mistralai/Mistral-Nemo-Instruct-2407",
+        completion = client.chat.completions.create(
+            model="mistralai/Mistral-7B-Instruct-v0.1",
             messages=st.session_state.messages,
             max_tokens=4096
         )
