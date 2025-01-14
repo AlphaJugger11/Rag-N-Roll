@@ -111,33 +111,33 @@ def get_response(question):
     """
     Generate a response using the Hugging Face API and retain previous context.
     """
-    # Retain context from previous messages in session state
-    messages = st.session_state.get("messages", [])
+    # Ensure previous messages are initialized
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
 
-    # Include the current question in the context
-    messages.append({"role": "user", "content": question})
+    # Add the user's question to the context
+    st.session_state.messages.append({"role": "user", "content": question})
 
-    # Create a prompt for the Hugging Face model
+    # Validate alternation of roles in the message sequence
     try:
-        # Call the Hugging Face API
-        completion = client.chat.completions.create(
+        completion = client.chat_completions.create(
             model="mistralai/Mistral-Nemo-Instruct-2407",
-            messages=messages,
+            messages=st.session_state.messages,
             max_tokens=4096
         )
 
-        # Extract the response
+        # Extract the assistant's response
         response_content = completion["choices"][0]["message"]["content"]
 
-        # Update the session state with the assistant's response
+        # Add the assistant's response to the context
         st.session_state.messages.append({"role": "assistant", "content": response_content})
 
-        # Return the response text
         return response_content
 
     except Exception as e:
         st.error(f"Error during API call: {e}")
         return "I'm sorry, I couldn't process your request."
+
 
 
 # Display previous chat messages
