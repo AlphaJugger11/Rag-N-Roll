@@ -128,7 +128,7 @@ def get_response(question):
 
     try:
         # Make an API call to the Hugging Face model
-        response = client.query(
+        response = client.text(
             model="mistralai/Mistral-Nemo-Instruct-2407",
             inputs={"messages": valid_messages},
             parameters={"max_tokens": 4096},
