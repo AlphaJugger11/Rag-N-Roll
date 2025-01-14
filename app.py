@@ -138,6 +138,14 @@ def get_response(question):
         st.error(f"Error during API call: {e}")
         return "I'm sorry, I couldn't process your request."
 
+# Display previous chat messages
+for message in st.session_state.messages:
+    if message["role"] == "user":
+        st.chat_message("User").write(message["content"])
+    else:
+        st.chat_message("Assistant").write(message["content"])
+
+
 
 
 # Display previous chat messages
