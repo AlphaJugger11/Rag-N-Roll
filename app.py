@@ -129,7 +129,7 @@ def get_response(question):
     try:
         # Make an API call to the Hugging Face model
         response = client.text(
-            model="mistralai/Mistral-Nemo-Instruct-2407",
+            model="mistralai/Mistral-7B-Instruct-v0.3",
             inputs={"messages": valid_messages},
             parameters={"max_tokens": 4096},
         )
