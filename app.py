@@ -111,40 +111,36 @@ def get_response(question):
     """
     Generate a response using the Hugging Face API and retain previous context.
     """
-    # Ensure session state for messages is initialized
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
-
-    # Add the user's question to the chat history
+    # Add user's question to session state messages
     st.session_state.messages.append({"role": "user", "content": question})
 
-    # Prepare valid messages with strict role alternation
-    valid_messages = []
-    last_role = None
-    for msg in st.session_state.messages:
-        if msg["role"] != last_role:
-            valid_messages.append(msg)
-            last_role = msg["role"]
-
     try:
-        # Make an API call to the Hugging Face model
-        response = client.chat_completions.create(
-            model="mistralai/Mistral-7B-Instruct-v0.3",
-            inputs={"messages": valid_messages},
-            parameters={"max_tokens": 4096},
+        # Call Hugging Face chat completions API
+        completion = client.chat.completions.create(
+            model="mistralai/Mistral-7B-Instruct-v0.3",  # Replace with your model if necessary
+            messages=st.session_state.messages,
+            max_tokens=500  # Adjust max tokens based on the response length you need
         )
 
         # Extract the assistant's response
-        response_content = response.get("choices", [{}])[0].get("message", {}).get("content", "")
+        response_content = completion.choices[0].message["content"]
 
-        # Add the assistant's response to the context
+        # Add assistant's response to session state messages
         st.session_state.messages.append({"role": "assistant", "content": response_content})
 
+        # Return the assistant's response
         return response_content
 
     except Exception as e:
         st.error(f"Error during API call: {e}")
         return "I'm sorry, I couldn't process your request."
+
+# Display previous chat messages
+for message in st.session_state.messages:
+    if message["role"] == "user":
+        st.chat_message("User").write(message["content"])
+    else:
+        st.chat_message("Assistant").write(message["content"])
 
 
 
