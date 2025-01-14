@@ -114,16 +114,18 @@ def get_response(question):
     # Add user's question to session state messages
     st.session_state.messages.append({"role": "user", "content": question})
 
+    # Ensure the roles alternate correctly
+    # Hugging Face requires alternating 'user' and 'assistant' roles in the conversation
     try:
         # Call Hugging Face chat completions API
         completion = client.chat.completions.create(
             model="mistralai/Mistral-7B-Instruct-v0.3",  # Replace with your model if necessary
-            messages=st.session_state.messages,
+            messages=st.session_state.messages,  # Passing the full conversation context
             max_tokens=500  # Adjust max tokens based on the response length you need
         )
 
         # Extract the assistant's response
-        response_content = completion.choices[0].message["content"]
+        response_content = completion['choices'][0]['message']['content']
 
         # Add assistant's response to session state messages
         st.session_state.messages.append({"role": "assistant", "content": response_content})
