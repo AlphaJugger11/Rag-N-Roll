@@ -108,17 +108,37 @@ def complete(myquestion, model_name, rag=1):
     return df_response, url_link, relative_path
 
 def get_response(question):
-    model = 'mistral-large'
-    rag = 1
-    response, url_link, relative_path = complete(question, model, rag)
-    if response:
-        res_text = response[0].RESPONSE
-        st.markdown(res_text)
-        if rag == 1:
-            display_url = f"Link to [{relative_path}]({url_link}) that may be useful"
-            st.markdown(display_url)
-        return res_text
-    return "Error generating response."
+    """
+    Generate a response using the Hugging Face API and retain previous context.
+    """
+    # Retain context from previous messages in session state
+    messages = st.session_state.get("messages", [])
+
+    # Include the current question in the context
+    messages.append({"role": "user", "content": question})
+
+    # Create a prompt for the Hugging Face model
+    try:
+        # Call the Hugging Face API
+        completion = client.chat.completions.create(
+            model="mistralai/Mistral-Nemo-Instruct-2407",
+            messages=messages,
+            max_tokens=4096
+        )
+
+        # Extract the response
+        response_content = completion["choices"][0]["message"]["content"]
+
+        # Update the session state with the assistant's response
+        st.session_state.messages.append({"role": "assistant", "content": response_content})
+
+        # Return the response text
+        return response_content
+
+    except Exception as e:
+        st.error(f"Error during API call: {e}")
+        return "I'm sorry, I couldn't process your request."
+
 
 # Display previous chat messages
 for message in st.session_state.messages:
