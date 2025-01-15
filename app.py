@@ -69,14 +69,15 @@ def create_prompt(myquestion, rag=1):
         
         df_context = session.sql(cmd, params=[myquestion, num_chunks]).to_pandas()
         
-        prompt_context = " ".join(df_context["CHUNK"].astype(str))  # Merge all chunks into one string
-        st.write(prompt_context)
+        prompt_context = "  ".join(df_context["CHUNK"].astype(str))  # Merge all chunks into one string
+        # st.write(prompt_context)
         relative_path = df_context["RELATIVE_PATH"].iloc[0]  # Get the first relative path
-        st.write(relative_path)
+        # st.write(relative_path)
         
         prompt = f"""
         'You are an expert legal assistant extracting information from context provided. 
-        Answer the question based on the context. Be concise and do not hallucinate. 
+        Answer the question based on the context.The context is not visible to the user. The context should be reffered to as your knowledge.
+        use the context to answer questions where applicable.Be concise and do not hallucinate. 
         If you don’t have the information just say so.
         Context: {prompt_context}
         Question: {myquestion}
@@ -103,7 +104,6 @@ def complete(myquestion, model_name, rag=1):
 
     prompt, url_link, relative_path = create_prompt(myquestion, rag)
     messages = [{"role": "user", "content": prompt}]
-    
     # Hugging Face Inference
     completion = client.chat.completions.create(
         model="mistralai/Mistral-7B-Instruct-v0.3", 
@@ -121,7 +121,7 @@ def get_response(question):
     model = 'mistral-large'
     rag = 1
     response = complete(question, model, rag)
-    st.markdown(response)
+    # st.markdown(response)
     return response
 
 
@@ -151,8 +151,11 @@ if user_input := st.chat_input("Type your message:"):
     st.chat_message("User").write(user_input)
     # Generate chatbot's response
     with st.spinner("Thinking..."):
-        bot_response = get_response(st.session_state.messages)
+        # st.write('here')
+        bot_response =(get_response(st.session_state.messages).content )
+        # st.write('here')
         st.session_state.messages.append({"role": "assistant", "content": bot_response})
+        # st.write('here')
 
     # Display the chatbot's response
     st.chat_message("Assistant").write(bot_response)
