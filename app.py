@@ -93,8 +93,8 @@ def create_prompt(myquestion, rag=1):
 
 
 def complete(myquestion, model_name, rag=1):
-    st.write(question)
-    st.write(type(question))
+    st.write(myquestion)
+    st.write(type(myquestion))
 
     if isinstance(myquestion, list):  # Check if myquestion is a list of messages
         myquestion = myquestion[-1]["content"]  # Extract the latest message content
