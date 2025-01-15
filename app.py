@@ -46,7 +46,7 @@ if "messages" not in st.session_state:
     
 # *****************************Adding functions*********************************
 num_chunks = 3
-def create_prompt (myquestion, rag):
+def create_prompt (myquestion, rag=1):
     if rag == 1:    
 
         cmd = """
@@ -104,10 +104,10 @@ def complete(myquestion, model_name, rag = 1):
     # df_response = session.sql(cmd, params=['mistral-large', prompt]).collect()
     messages = [{
     		"role": "user",
-		    "content": prompt
+		"content": prompt
 
     }]
-    client = InferenceClient(api_key = st.secrets['API_KEY'])
+    # client = InferenceClient(api_key = st.secrets['API_KEY'])
     completion = client.chat.completions.create(
             model="mistralai/Mistral-7B-Instruct-v0.3", 
 	        messages=messages, 
