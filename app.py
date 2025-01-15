@@ -47,8 +47,8 @@ if "messages" not in st.session_state:
 # *****************************Adding functions*********************************
 num_chunks = 3
 def create_prompt(myquestion, rag=1):
-    st.write(myquestion)
-    st.write(type(myquestion))
+    # st.write(myquestion)
+    # st.write(type(myquestion))
 
 
     if isinstance(myquestion, dict):
@@ -70,7 +70,9 @@ def create_prompt(myquestion, rag=1):
         df_context = session.sql(cmd, params=[myquestion, num_chunks]).to_pandas()
         
         prompt_context = " ".join(df_context["CHUNK"].astype(str))  # Merge all chunks into one string
+        st.write(prompt_context)
         relative_path = df_context["RELATIVE_PATH"].iloc[0]  # Get the first relative path
+        st.write(relative_path)
         
         prompt = f"""
         'You are an expert legal assistant extracting information from context provided. 
@@ -93,8 +95,8 @@ def create_prompt(myquestion, rag=1):
 
 
 def complete(myquestion, model_name, rag=1):
-    st.write(myquestion)
-    st.write(type(myquestion))
+    # st.write(myquestion)
+    # st.write(type(myquestion))
 
     if isinstance(myquestion, list):  # Check if myquestion is a list of messages
         myquestion = myquestion[-1]["content"]  # Extract the latest message content
@@ -113,8 +115,8 @@ def complete(myquestion, model_name, rag=1):
     # return df_response, url_link, relative_path
 
 def get_response(question):
-    st.write(question)
-    st.write(type(question))
+    # st.write(question)
+    # st.write(type(question))
 
     model = 'mistral-large'
     rag = 1
