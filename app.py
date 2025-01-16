@@ -127,18 +127,6 @@ def get_response(question):
     return response
 
 
-# Function to generate a response using the Hugging Face model
-# def get_response(messages):
-#     """
-#     Generate a response using the Hugging Face Mistral model.
-#     """
-#     completion = client.chat.completions.create(
-#         model="mistralai/Mistral-Nemo-Instruct-2407",
-#         messages=messages,
-#         max_tokens=4096
-#     )
-#     return completion["choices"][0]["message"]["content"]
-
 # Display previous chat messages
 for message in st.session_state.messages:
     if message["role"] == "user":
