@@ -160,11 +160,11 @@ if user_input := st.chat_input("Type your message:"):
         st.session_state.messages1.append({"role": "assistant", "content": bot_response})
         # st.write('here')
 
+    # Display the chatbot's response
+    st.chat_message("Assistant").write(bot_response)
+
     cmd3 = """
      INSERT INTO CONVERSATION_HISTORY (USER_PROMPT, RESPONSE)
                 VALUES (?, ?)
     """
     session.sql(cmd3, params=[user_input, bot_response]).collect()
-
-    # Display the chatbot's response
-    st.chat_message("Assistant").write(bot_response)
