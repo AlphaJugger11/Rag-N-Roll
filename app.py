@@ -51,13 +51,6 @@ client = InferenceClient(api_key=st.secrets["API_KEY"])
 
 # Initial page config
 
-
-# Streamlit app layout
-st.sidebar.title("Chat App")
-st.sidebar.write(st.session_state.summary)
-
-st.title("Interactive Chatbot")
-
 # Initialize session state for chat messages
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -65,6 +58,14 @@ if "messages" not in st.session_state:
     st.session_state.BotResponse = []     #bot response
     st.session_state.chatpk=generate_unique_key()
     st.session_state.summary = ""
+
+# Streamlit app layout
+st.sidebar.title("Chat App")
+st.sidebar.write(st.session_state.summary)
+
+st.title("Interactive Chatbot")
+
+
 
 
 
