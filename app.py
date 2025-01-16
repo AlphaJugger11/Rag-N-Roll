@@ -186,7 +186,7 @@ def create_prompt(myquestion, rag=1):
            Answer: 
            """
 
-    return prompt
+    return prompt,url_link, relative_path
 
 def complete(myquestion, model_name, rag=1):
     # st.write(myquestion)
