@@ -75,8 +75,8 @@ def get_chat_history():
     #Get the history from the st.session_stage.messages according to the slide window parameter 
     chat_history = []
     
-    start_index = max(0, len(st.session_state.messages) - slide_window)
-    for i in range (start_index , len(st.session_state.messages) -1):
+    start_index = max(0, len(st.session_state.BotResponse) - slide_window)
+    for i in range (start_index , len(st.session_state.BotResponse) -1):
          chat_history.append({
              "User": st.session_state.UserPrompt[i],
              "Response": st.session_state.BotResponse[i]})
