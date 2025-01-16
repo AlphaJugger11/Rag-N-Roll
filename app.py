@@ -61,9 +61,23 @@ st.title("Interactive Chatbot")
 # Initialize session state for chat messages
 if "messages" not in st.session_state:
     st.session_state.messages = []
-    st.session_state.messages1=[]
+    st.session_state.UserResponse = []  #user prompts
+    st.session_state.BotResponse = []     #bot response
     st.session_state.chatpk=generate_unique_key()
+
+slide_window = 2 # no of last conversations to keep
+
+def get_chat_history():
+    #Get the history from the st.session_stage.messages according to the slide window parameter 
+    chat_history = []
     
+    start_index = max(0, len(st.session_state.messages) - slide_window)
+    for i in range (start_index , len(st.session_state.messages) -1):
+         chat_history.append({
+             "User": st.session_state.UserResponse[i],
+             "Response": st.session_state.BotResponse[i]})
+
+    return chat_history
 # *****************************Adding functions*********************************
 num_chunks = 10
 def create_prompt(myquestion, rag=1):
