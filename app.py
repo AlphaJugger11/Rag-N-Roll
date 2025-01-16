@@ -61,9 +61,12 @@ st.title("Interactive Chatbot")
 # Initialize session state for chat messages
 if "messages" not in st.session_state:
     st.session_state.messages = []
-    st.session_state.UserResponse = []  #user prompts
+    st.session_state.UserPrompt = []  #user prompts
     st.session_state.BotResponse = []     #bot response
     st.session_state.chatpk=generate_unique_key()
+    st.session_state.summary = ""
+
+
 
 slide_window = 2 # no of last conversations to keep
 
@@ -74,10 +77,35 @@ def get_chat_history():
     start_index = max(0, len(st.session_state.messages) - slide_window)
     for i in range (start_index , len(st.session_state.messages) -1):
          chat_history.append({
-             "User": st.session_state.UserResponse[i],
+             "User": st.session_state.UserPrompt[i],
              "Response": st.session_state.BotResponse[i]})
 
     return chat_history
+
+def summarize_question_with_history(chat_history, question):
+# To get the right context, use the LLM to first summarize the previous conversation
+# This will be used to get embeddings and find similar chunks in the docs for context
+
+    prompt = f"""
+        Based on the chat history below and the question, generate a query that extend the question
+        with the chat history provided. The query should be in natual language. 
+        Answer with only the query. Do not add any explanation.
+        
+        <chat_history>
+        {chat_history}
+        </chat_history>
+        <question>
+        {question}
+        </question>
+        """
+
+    st.session_state.summary = client.chat.completions.create(
+        model="mistralai/Mistral-7B-Instruct-v0.3", 
+        messages=prompt, 
+        max_tokens=4096
+    ).choices[0].message
+    
+
 # *****************************Adding functions*********************************
 num_chunks = 10
 def create_prompt(myquestion, rag=1):
@@ -137,14 +165,13 @@ def complete(myquestion, model_name, rag=1):
         myquestion = myquestion[-1]["content"]  # Extract the latest message content
 
     prompt, url_link, relative_path = create_prompt(myquestion, rag)
-    st.session_state.messages1.append({"role": "user", "content": prompt})
+    st.session_state.UserPrompt.append({"role": "user", "content": prompt})
     # Hugging Face Inference
     completion = client.chat.completions.create(
         model="mistralai/Mistral-7B-Instruct-v0.3", 
-        messages=st.session_state.messages1, 
+        messages=prompt, 
         max_tokens=4096
     )
-    st.markdown(st.session_state.messages1)
     return completion.choices[0].message
 
     # return df_response, url_link, relative_path
@@ -178,7 +205,7 @@ if user_input := st.chat_input("Type your message:"):
         bot_response =(get_response(st.session_state.messages).content )
         # st.write('here')
         st.session_state.messages.append({"role": "assistant", "content": bot_response})
-        st.session_state.messages1.append({"role": "assistant", "content": bot_response})
+        st.session_state.BotResponse.append({"role": "assistant", "content": bot_response})
         # st.write('here')
 
     # Display the chatbot's response
