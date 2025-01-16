@@ -158,9 +158,9 @@ def create_prompt(myquestion, rag=1):
 
     if chat_history != []: #There is chat_history, so not first question
         summarize_question_with_history(chat_history, myquestion)       
-        prompt_context = similar_chunks(st.session_state.summary)
+        prompt_context, url_link, relative_path = similar_chunks(st.session_state.summary)
     else:
-        prompt_context = similar_chunks(myquestion)
+        prompt_context, url_link, relative_path = similar_chunks(myquestion)
 
     prompt = f"""
            You are an expert chat assistance that extracs information from the CONTEXT provided
