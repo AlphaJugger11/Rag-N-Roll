@@ -84,7 +84,7 @@ def create_prompt(myquestion, rag=1):
         Question: {myquestion}
         Answer:'
         """
-        st.markdown(prompt)
+        
         cmd2 = f"select GET_PRESIGNED_URL(@docs, '{relative_path}', 360) as URL_LINK from directory(@docs)"
         df_url_link = session.sql(cmd2).to_pandas()
         url_link = df_url_link["URL_LINK"].iloc[0]
@@ -111,6 +111,7 @@ def complete(myquestion, model_name, rag=1):
         messages=st.session_state.messages1, 
         max_tokens=4096
     )
+    st.markdown(st.session_state.messages1)
     return completion.choices[0].message
 
     # return df_response, url_link, relative_path
