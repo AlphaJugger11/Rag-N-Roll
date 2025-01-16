@@ -54,7 +54,7 @@ client = InferenceClient(api_key=st.secrets["API_KEY"])
 
 # Streamlit app layout
 st.sidebar.title("Chat App")
-st.sidebar.write("This is a simple chat app built with Streamlit.")
+st.sidebar.write(st.session_state.summary)
 
 st.title("Interactive Chatbot")
 
