@@ -5,6 +5,24 @@ from snowflake.snowpark.context import get_active_session
 from snowflake import snowpark
 from huggingface_hub import InferenceClient
 # session = get_active_session()
+import time
+import random
+import hashlib
+
+def generate_unique_key():
+    # Get a high-resolution timestamp (microseconds)
+    timestamp_us = int(time.time() * 1_000_000)
+    
+    # Generate a random number
+    random_num = random.randint(0, 999999999)
+    
+    # Combine them into a string
+    raw_string = f"{timestamp_us}-{random_num}"
+    
+    # Optionally hash the combined string to get a shorter or more uniform key
+    unique_hash = hashlib.sha256(raw_string.encode()).hexdigest()
+    
+    return unique_hash
 
 st.set_page_config(
     page_title="Chat App",
@@ -44,6 +62,7 @@ st.title("Interactive Chatbot")
 if "messages" not in st.session_state:
     st.session_state.messages = []
     st.session_state.messages1=[]
+    st.session_state.chatpk=generate_unique_key()
     
 # *****************************Adding functions*********************************
 num_chunks = 10
@@ -152,7 +171,7 @@ if user_input := st.chat_input("Type your message:"):
     st.chat_message("Assistant").write(bot_response)
 
     cmd3 = """
-     INSERT INTO CONVERSATION_HISTORY (USER_PROMPT, RESPONSE)
-                VALUES (?, ?)
+     INSERT INTO CONVERSATION_HISTORY (USER_PROMPT, RESPONSE, CHAT_ID )
+                VALUES (?, ?,?)
     """
-    session.sql(cmd3, params=[user_input, bot_response]).collect()
+    session.sql(cmd3, params=[user_input, bot_response,st.session_state.chatpk]).collect()

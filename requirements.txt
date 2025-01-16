@@ -7,3 +7,6 @@ pandas
 snowflake-connector-python
 pdfplumber
 snowflake-snowpark-python
+tiem
+random
+hashlib
