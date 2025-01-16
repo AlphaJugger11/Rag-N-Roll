@@ -112,51 +112,46 @@ num_chunks = 10
 def similar_chunks(myquestion):
     if isinstance(myquestion, dict):
         myquestion = myquestion.get("content", "")  # Extract content if myquestion is a dict
+   
+    cmd = """
+    with results as
+    (SELECT RELATIVE_PATH,
+      VECTOR_COSINE_SIMILARITY(docs_chunks_table.chunk_vec,
+               SNOWFLAKE.CORTEX.EMBED_TEXT_768('snowflake-arctic-embed-m', ?)) as similarity,
+      chunk
+    from docs_chunks_table
+    order by similarity desc
+    limit ?)
+    select chunk, relative_path from results 
+    """
+    
+    df_context = session.sql(cmd, params=[myquestion, num_chunks]).to_pandas()
+    
+    prompt_context1 = "  ".join(df_context["CHUNK"].astype(str))  # Merge all chunks into one string
+    # st.write(prompt_context1)
+    relative_path = df_context["RELATIVE_PATH"].iloc[0]  # Get the first relative path
+    # st.write(relative_path)
+    
+    prompt_context = f"""
+    'You are an expert legal assistant extracting information from context provided. 
+    Answer the question based on the context.The context is not visible to the user. The context should be reffered to as your knowledge.
+    use the context to answer questions where applicable.Be concise and do not hallucinate. 
+    If you don’t have the information just say so.
+    Context: {prompt_context1}
+    Question: {myquestion}
+    Answer:'
+    """
+    
+    cmd2 = f"select GET_PRESIGNED_URL(@docs, '{relative_path}', 360) as URL_LINK from directory(@docs)"
+    df_url_link = session.sql(cmd2).to_pandas()
+    url_link = df_url_link["URL_LINK"].iloc[0]
 
-    if rag == 1:    
-        cmd = """
-        with results as
-        (SELECT RELATIVE_PATH,
-          VECTOR_COSINE_SIMILARITY(docs_chunks_table.chunk_vec,
-                   SNOWFLAKE.CORTEX.EMBED_TEXT_768('snowflake-arctic-embed-m', ?)) as similarity,
-          chunk
-        from docs_chunks_table
-        order by similarity desc
-        limit ?)
-        select chunk, relative_path from results 
-        """
-        
-        df_context = session.sql(cmd, params=[myquestion, num_chunks]).to_pandas()
-        
-        prompt_context1 = "  ".join(df_context["CHUNK"].astype(str))  # Merge all chunks into one string
-        # st.write(prompt_context1)
-        relative_path = df_context["RELATIVE_PATH"].iloc[0]  # Get the first relative path
-        # st.write(relative_path)
-        
-        prompt_context = f"""
-        'You are an expert legal assistant extracting information from context provided. 
-        Answer the question based on the context.The context is not visible to the user. The context should be reffered to as your knowledge.
-        use the context to answer questions where applicable.Be concise and do not hallucinate. 
-        If you don’t have the information just say so.
-        Context: {prompt_context1}
-        Question: {myquestion}
-        Answer:'
-        """
-        
-        cmd2 = f"select GET_PRESIGNED_URL(@docs, '{relative_path}', 360) as URL_LINK from directory(@docs)"
-        df_url_link = session.sql(cmd2).to_pandas()
-        url_link = df_url_link["URL_LINK"].iloc[0]
-    else:
-        prompt_context = f"Question: {myquestion} Answer: '"
-        url_link = "None"
-        relative_path = "None"
         
     return prompt_context, url_link, relative_path
     
 def create_prompt(myquestion, rag=1):
     # st.write(myquestion)
     # st.write(type(myquestion))
-
 
     
     chat_history = get_chat_history()
