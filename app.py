@@ -43,6 +43,7 @@ st.title("Interactive Chatbot")
 # Initialize session state for chat messages
 if "messages" not in st.session_state:
     st.session_state.messages = []
+    st.session_state.messages1=[]
     
 # *****************************Adding functions*********************************
 num_chunks = 10
@@ -103,11 +104,11 @@ def complete(myquestion, model_name, rag=1):
         myquestion = myquestion[-1]["content"]  # Extract the latest message content
 
     prompt, url_link, relative_path = create_prompt(myquestion, rag)
-    messages = [{"role": "user", "content": prompt}]
+    st.session_state.messages1.append({"role": "user", "content": prompt})
     # Hugging Face Inference
     completion = client.chat.completions.create(
         model="mistralai/Mistral-7B-Instruct-v0.3", 
-        messages=messages, 
+        messages=st.session_state.messages1, 
         max_tokens=4096
     )
     return completion.choices[0].message
@@ -155,6 +156,7 @@ if user_input := st.chat_input("Type your message:"):
         bot_response =(get_response(st.session_state.messages).content )
         # st.write('here')
         st.session_state.messages.append({"role": "assistant", "content": bot_response})
+        st.session_state.messages1.append({"role": "assistant", "content": bot_response})
         # st.write('here')
 
     # Display the chatbot's response
