@@ -98,7 +98,7 @@ def summarize_question_with_history(chat_history, question):
 
     st.session_state.summary = client.chat.completions.create(
         model="mistralai/Mistral-7B-Instruct-v0.3", 
-        messages=prompt, 
+        messages={"role": "user", "content": prompt}, 
         max_tokens=4096
     ).choices[0].message
     
@@ -190,7 +190,7 @@ def complete(myquestion, model_name, rag=1):
     # Hugging Face Inference
     completion = client.chat.completions.create(
         model="mistralai/Mistral-7B-Instruct-v0.3", 
-        messages=prompt, 
+        messages={"role": "user", "content": prompt}, 
         max_tokens=4096
     )
     return completion.choices[0].message
