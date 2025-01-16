@@ -98,7 +98,9 @@ def summarize_question_with_history(chat_history, question):
 
     st.session_state.summary = client.chat.completions.create(
         model="mistralai/Mistral-7B-Instruct-v0.3", 
-        messages={"role": "user", "content": prompt}, 
+        messages=[
+        {"role": "user", "content": prompt}  # Correctly formatted as a list of dictionaries
+    ], 
         max_tokens=4096
     ).choices[0].message
     
