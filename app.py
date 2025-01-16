@@ -45,7 +45,7 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
     
 # *****************************Adding functions*********************************
-num_chunks = 3
+num_chunks = 10
 def create_prompt(myquestion, rag=1):
     # st.write(myquestion)
     # st.write(type(myquestion))
@@ -83,7 +83,7 @@ def create_prompt(myquestion, rag=1):
         Question: {myquestion}
         Answer:'
         """
-        
+        st.markdown(prompt_context)
         cmd2 = f"select GET_PRESIGNED_URL(@docs, '{relative_path}', 360) as URL_LINK from directory(@docs)"
         df_url_link = session.sql(cmd2).to_pandas()
         url_link = df_url_link["URL_LINK"].iloc[0]
@@ -108,7 +108,7 @@ def complete(myquestion, model_name, rag=1):
     completion = client.chat.completions.create(
         model="mistralai/Mistral-7B-Instruct-v0.3", 
         messages=messages, 
-        max_tokens=500
+        max_tokens=4096
     )
     return completion.choices[0].message
 
