@@ -190,7 +190,9 @@ def complete(myquestion, model_name, rag=1):
     # Hugging Face Inference
     completion = client.chat.completions.create(
         model="mistralai/Mistral-7B-Instruct-v0.3", 
-        messages={"role": "user", "content": prompt}, 
+          messages=[
+        {"role": "user", "content": prompt}  # Correctly formatted as a list of dictionaries
+    ], 
         max_tokens=4096
     )
     return completion.choices[0].message
