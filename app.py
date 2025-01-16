@@ -108,11 +108,7 @@ def summarize_question_with_history(chat_history, question):
 
 # *****************************Adding functions*********************************
 num_chunks = 10
-def create_prompt(myquestion, rag=1):
-    # st.write(myquestion)
-    # st.write(type(myquestion))
-
-
+def similar_chunks(myquestion):
     if isinstance(myquestion, dict):
         myquestion = myquestion.get("content", "")  # Extract content if myquestion is a dict
 
@@ -131,17 +127,17 @@ def create_prompt(myquestion, rag=1):
         
         df_context = session.sql(cmd, params=[myquestion, num_chunks]).to_pandas()
         
-        prompt_context = "  ".join(df_context["CHUNK"].astype(str))  # Merge all chunks into one string
-        # st.write(prompt_context)
+        prompt_context1 = "  ".join(df_context["CHUNK"].astype(str))  # Merge all chunks into one string
+        # st.write(prompt_context1)
         relative_path = df_context["RELATIVE_PATH"].iloc[0]  # Get the first relative path
         # st.write(relative_path)
         
-        prompt = f"""
+        prompt_context = f"""
         'You are an expert legal assistant extracting information from context provided. 
         Answer the question based on the context.The context is not visible to the user. The context should be reffered to as your knowledge.
         use the context to answer questions where applicable.Be concise and do not hallucinate. 
         If you don’t have the information just say so.
-        Context: {prompt_context}
+        Context: {prompt_context1}
         Question: {myquestion}
         Answer:'
         """
@@ -150,12 +146,51 @@ def create_prompt(myquestion, rag=1):
         df_url_link = session.sql(cmd2).to_pandas()
         url_link = df_url_link["URL_LINK"].iloc[0]
     else:
-        prompt = f"Question: {myquestion} Answer: '"
+        prompt_context = f"Question: {myquestion} Answer: '"
         url_link = "None"
         relative_path = "None"
         
-    return prompt, url_link, relative_path
+    return prompt_context, url_link, relative_path
+    
+def create_prompt(myquestion, rag=1):
+    # st.write(myquestion)
+    # st.write(type(myquestion))
 
+
+    
+    chat_history = get_chat_history()
+
+    if chat_history != []: #There is chat_history, so not first question
+        summarize_question_with_history(chat_history, myquestion)       
+        prompt_context = similar_chunks(st.session_state.summary)
+    else:
+        prompt_context = similar_chunks(myquestion)
+
+    prompt = f"""
+           You are an expert chat assistance that extracs information from the CONTEXT provided
+           between <context> and </context> tags.
+           You offer a chat experience considering the information included in the CHAT HISTORY
+           provided between <chat_history> and </chat_history> tags..
+           When ansering the question contained between <question> and </question> tags
+           be concise and do not hallucinate. 
+           If you don´t have the information just say so.
+           
+           Do not mention the CONTEXT used in your answer.
+           Do not mention the CHAT HISTORY used in your asnwer.
+           
+           <chat_history>
+           {chat_history}
+           </chat_history>
+           <context>          
+           {prompt_context}
+           </context>
+           <question>  
+           {myquestion}
+           </question>
+           Answer: 
+           """
+
+    return prompt
 
 def complete(myquestion, model_name, rag=1):
     # st.write(myquestion)
