@@ -28,7 +28,7 @@ st.set_page_config(
     page_title="Chat App",
     page_icon="💬",
     layout="wide",
-    initial_sidebar_state="collapsed"  # Sidebar starts in collapsed state
+    # initial_sidebar_state="collapsed"  # Sidebar starts in collapsed state
 )
 
 connection_params = {
@@ -92,12 +92,8 @@ def summarize_question_with_history(chat_history, question):
         with the chat history provided. The query should be in natual language. 
         Answer with only the query. Do not add any explanation.
         
-        <chat_history>
-        {chat_history}
-        </chat_history>
-        <question>
-        {question}
-        </question>
+        Chat_history: {chat_history}
+        User_Query: {question}
         """
 
     st.session_state.summary = client.chat.completions.create(
@@ -174,15 +170,9 @@ def create_prompt(myquestion, rag=1):
            Do not mention the CONTEXT used in your answer.
            Do not mention the CHAT HISTORY used in your asnwer.
            
-           <chat_history>
-           {chat_history}
-           </chat_history>
-           <context>          
-           {prompt_context}
-           </context>
-           <question>  
-           {myquestion}
-           </question>
+           Chat_history: {chat_history}      
+           context: {prompt_context}
+           User_Query: {myquestion}
            Answer: 
            """
 
