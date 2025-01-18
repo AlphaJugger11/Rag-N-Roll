@@ -89,7 +89,7 @@ def summarize_question_with_history(chat_history, question):
 
     prompt = f"""
         Based on the chat history below and the question, generate a query that extend the question
-        with the chat history provided. The query should be in natual language. 
+        with the chat history provided. The query should be in natural language. 
         Answer with only the query. Do not add any explanation.
         
         Chat_history: {chat_history}
@@ -132,9 +132,11 @@ def similar_chunks(myquestion):
     
     prompt_context = f"""
     'You are an expert legal assistant extracting information from context provided. 
-    Answer the question based on the context.The context is not visible to the user. The context should be reffered to as your knowledge.
+    Answer the question based on the context.The context is not visible to the user. The context should be reffered to as per your knowledge.
     use the context to answer questions where applicable.Be concise and do not hallucinate. 
-    If you don’t have the information just say so.
+    Do not tell the user that consult any expert in this field as you yourself are an expert legal assitant. If you don’t have the information just say that you don't know. 
+    Provide any laws or acts that exist regarding the specific condition with proper reference and article or law number. 
+    
     Context: {prompt_context1}
     Question: {myquestion}
     Answer:'
