@@ -23,7 +23,7 @@ def generate_unique_key():
 # Page config
 # --------------------------------------------------------------------------------
 st.set_page_config(
-    page_title="Legal Assistant",
+    page_title="Chat App",
     page_icon="💬",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -92,7 +92,7 @@ for chat_id, chat_data in st.session_state.all_chats.items():
     if st.sidebar.button(chat_data["title"], use_container_width=True):
         st.session_state.active_chat_id = chat_id
 
-st.title("Legal Chatbot")
+st.title("Interactive Chatbot")
 
 # --------------------------------------------------------------------------------
 # Retrieve the active chat
@@ -168,7 +168,7 @@ def similar_chunks(myquestion):
     'You are an expert legal assistant extracting information from context provided. 
 
     Answer the question based on the context. The context is not visible to the user. The context should be referred to as your knowledge.
-    Use the context to answer questions where applicable. Be concice and elaborate details regarding the content you covered and do not hallucinate. 
+    Use the context to answer questions where applicable. get relivant data and after stating it explain it further and do not hallucinate. 
     If you don’t have the information just say so.
 
     Context: {prompt_context1}
@@ -190,7 +190,7 @@ def create_prompt(myquestion, chat_data, rag=1):
     else:
         prompt_context, url_link, relative_path = similar_chunks(myquestion)
 
-    # st.write(prompt_context)
+    st.write(prompt_context)
     prompt = f"""
     You are an expert chat assistant that extracts information from the CONTEXT 
     provided between <context> and </context> tags.
@@ -288,6 +288,6 @@ if user_input := st.chat_input("Type your message:"):
     """
     session.sql(insert_cmd, params=[user_input, bot_response, active_chat["chatpk"]]).collect()
 
-    # 4) Check if total messages == 2, then create 3-word summary *once*
-    if len(active_chat["messages"]) ==2:
+    # 4) Check if total messages == 6, then create 3-word summary *once*
+    if len(active_chat["messages"]) ==4:
         threeWordSummary(st.session_state.active_chat_id)
