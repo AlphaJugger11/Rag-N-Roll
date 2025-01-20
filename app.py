@@ -123,6 +123,7 @@ def get_chat_history(chat_data):
 
 def summarize_question_with_history(chat_history, question):
     prompt = f"""
+
     Based on the chat history below and the question, generate a query that extends the question
     with the chat history provided. The query should be in natural language.
     Answer with only the query. Do not add any explanation.
@@ -131,6 +132,7 @@ def summarize_question_with_history(chat_history, question):
     User_Query: {question}
     """
     summary_resp = client.chat.completions.create(
+
         model="mistralai/Mistral-7B-Instruct-v0.3", 
         messages=[{"role": "user", "content": prompt}],
         max_tokens=4096
@@ -164,9 +166,11 @@ def similar_chunks(myquestion):
     
     prompt_context = f"""
     'You are an expert legal assistant extracting information from context provided. 
+
     Answer the question based on the context. The context is not visible to the user. The context should be referred to as your knowledge.
     Use the context to answer questions where applicable. Be concise and do not hallucinate. 
     If you don’t have the information just say so.
+
     Context: {prompt_context1}
     Question: {myquestion}
     Answer:'
@@ -186,6 +190,7 @@ def create_prompt(myquestion, chat_data, rag=1):
     else:
         prompt_context, url_link, relative_path = similar_chunks(myquestion)
 
+    st.write(prompt_context)
     prompt = f"""
     You are an expert chat assistant that extracts information from the CONTEXT 
     provided between <context> and </context> tags.
