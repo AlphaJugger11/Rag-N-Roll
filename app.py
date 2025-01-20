@@ -190,7 +190,7 @@ def create_prompt(myquestion, chat_data, rag=1):
     else:
         prompt_context, url_link, relative_path = similar_chunks(myquestion)
 
-    st.write(prompt_context)
+    # st.write(prompt_context)
     prompt = f"""
     You are an expert chat assistant that extracts information from the CONTEXT 
     provided between <context> and </context> tags.
