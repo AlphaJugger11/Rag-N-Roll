@@ -224,7 +224,7 @@ def get_response(question, chat_data):
 # --------------------------------------------------------------------------------
 def threeWordSummary(chat_id):
     """
-    Summarize the entire conversation of the chat in exactly 3 "words" (no punctuation).
+    make a heading for the entire conversation of the chat in exactly 3 "words" (no punctuation).
     Then, replace the chat's title with that summary.
     This happens only once when the chat's total messages reach 6.
     """
@@ -237,7 +237,7 @@ def threeWordSummary(chat_id):
         conversation_text += f"{msg['role'].title()}: {msg['content']}\n"
 
     prompt_for_summary = f"""
-    Summarize the conversation below in exactly 3 words. 
+    make a heading of the conversation below in exactly 3 words. 
     Do not add any explanation or punctuation:
 
     {conversation_text}
@@ -284,5 +284,5 @@ if user_input := st.chat_input("Type your message:"):
     session.sql(insert_cmd, params=[user_input, bot_response, active_chat["chatpk"]]).collect()
 
     # 4) Check if total messages == 6, then create 3-word summary *once*
-    if len(active_chat["messages"]) == 6:
+    if len(active_chat["messages"]) ==4:
         threeWordSummary(st.session_state.active_chat_id)
