@@ -93,7 +93,7 @@ for chat_id, chat_data in st.session_state.all_chats.items():
         st.session_state.active_chat_id = chat_id
 
 st.title("Interactive Legal Chatbot")
-st.markdown("## Context and history enabled chatbot")
+st.markdown("#### Context and history enabled chatbot")
 
 # --------------------------------------------------------------------------------
 # Retrieve the active chat
