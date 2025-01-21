@@ -92,7 +92,8 @@ for chat_id, chat_data in st.session_state.all_chats.items():
     if st.sidebar.button(chat_data["title"], use_container_width=True):
         st.session_state.active_chat_id = chat_id
 
-st.title("Interactive Chatbot")
+st.title("Interactive Legal Chatbot")
+st.markdown("## Context and history enabled chatbot")
 
 # --------------------------------------------------------------------------------
 # Retrieve the active chat
